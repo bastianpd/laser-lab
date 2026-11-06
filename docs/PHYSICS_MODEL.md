@@ -1,0 +1,7 @@
+# LaserLab physics model (Phase 1)
+Assumptions: lumped single-mode model; homogeneous four-level ensemble (E0 ground, E3 pump, E2 metastable upper, E1 lower); equal degeneracies; first-order non-radiative decays E3→E2 and E1→E0; no thermal effects or spectral hole burning.
+Units: time ns; n_i = N_i/Ntot (dimensionless, Σn_i = 1); Ntot, S in cm⁻³; σ cm²; vg cm/ns; g, αi, αm cm⁻¹; 1/τc = vg(αi+αm).
+Equations: dn3/dt = Wp n0 − n3/τ32; dn2/dt = n3/τ32 − n2/τsp − vgσ(n2−n1)S; dn1/dt = n2/τsp + vgσ(n2−n1)S − n1/τ1; dn0/dt = −Wp n0 + n1/τ1; dS/dt = Γ vgσ Ntot (n2−n1) S + βsp Ntot n2/τsp − S/τc.
+Γ = V_active/V_mode: photons gained per active volume (S/Γ) equal excitations lost, so n2 + S/(ΓNtot) is conserved when spontaneous decay, cavity loss and βsp vanish (tested).
+Threshold: Γσ Ntot Δn_th = 1/(vgτc). S=0 steady state: n0 = 1/(1+Wp(τ32+τsp+τ1)), n2 = Wp n0 τsp, n1 = Wp n0 τ1, so Wp_th = Δn_th / [(τsp−τ1) − Δn_th(τ32+τsp+τ1)] (∞ if unreachable). Above threshold (βsp=0) the inversion clamps at Δn_th: n0 = (1−Δn_th)/(1+Wp(τ32+2τ1)), S = (Wp n0 − n2/τsp)/(vgσΔn_th).
+Numerics: fixed-step RK4 (default 0.02 ns), sub-step capped at 0.5·2.78/λmax (conservative bound) for the current state; steps giving negative values are bisected (≤8 levels), never clipped; residual violations are counted and reported. Limitations: stiff regimes beyond the bound rely on the cap; real lifetimes (µs–ms) need a longer time unit.
